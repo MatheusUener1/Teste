@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -7,10 +6,39 @@
     <title>Redirecionando...</title>
     <link rel="manifest" href="manifest.json">
     <script>
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/service-worker.js').then(() => {
-                console.log('Service Worker registrado com sucesso.');
-            });
+        let deferredPrompt;
+
+        // Detecta se o navegador suporta o PWA
+        window.addEventListener('beforeinstallprompt', (e) => {
+            // Impede que o prompt de instalação padrão apareça
+            e.preventDefault();
+            // Armazena o evento para dispará-lo quando necessário
+            deferredPrompt = e;
+            
+            // Mostra o prompt customizado
+            showInstallPrompt();
+        });
+
+        // Função para mostrar o prompt customizado
+        function showInstallPrompt() {
+            if (confirm("Gostaria de adicionar o aplicativo à sua tela inicial?")) {
+                // Se o usuário confirmar, exibe o prompt
+                deferredPrompt.prompt();
+
+                // Após a resposta do usuário, redireciona para o site
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('Usuário aceitou adicionar à tela inicial');
+                    } else {
+                        console.log('Usuário rejeitou adicionar à tela inicial');
+                    }
+                    // Redireciona para o site
+                    window.location.href = "https://casabellatintas.superpontos.com.br";
+                });
+            } else {
+                // Se o usuário recusar, apenas redireciona
+                window.location.href = "https://casabellatintas.superpontos.com.br";
+            }
         }
     </script>
 </head>
